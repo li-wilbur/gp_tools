@@ -1,6 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
 
+
 def create_connection(host, port, user, password, database):
     """
     创建数据库连接
@@ -23,7 +24,8 @@ def create_connection(host, port, user, password, database):
         print(f"连接到MySQL数据库时出错: {e}")
         return None
 
-def execute_query(connection, query):
+
+def execute_query(connection, query, values=None):
     """
     执行读取 SQL 查询
     增删改
@@ -34,12 +36,13 @@ def execute_query(connection, query):
     if connection is not None:
         try:
             cursor = connection.cursor()
-            cursor.execute(query)
+            cursor.execute(query, values)
             connection.commit()
             print("Sql 执行成功！")
         except Error as e:
             print(f"执行查询时出错: {e}")
             return None
+
 
 def read_query(connection, query):
     """

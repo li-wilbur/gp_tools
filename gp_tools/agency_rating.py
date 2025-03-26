@@ -1,6 +1,8 @@
 import requests
 import bs4
 from gp_tools.conf import collection_list
+from gp_tools import db_operation
+from gp_tools.conf.mysql_conf import mysql_conf
 
 
 def get_gp(gp_code):
@@ -29,15 +31,33 @@ def agency_rating(html_content):
     result = []
     for row in rows[1:]:
         cols = row.find_all('td')
-        row_data = [col.get_text(strip=True) for col in cols]
+        row_data = []
+        try:
+            for col in cols:
+                row_data.append(col.get_text(strip=True))
+                if col.get_text(strip=True) == '摘要':
+                    link = 'https' + col.select_one('a').get('href')
+                    row_data[8] = link
+        except AttributeError as e:
+            print('tables data error:', e)
+            return None
+        # row_data = [col.get_text(strip=True) for col in cols]
+        del row_data[-4:]
         # print(row_data)
         result.append(row_data)
     # print(result)
     return result
 
+
 if __name__ == '__main__':
+    insert_sql = "INSERT INTO gp_agency_rating (gp_code,gp_name,gp_target_price,gp_latest_rating,gp_rating_agency,gp_analyst,gp_industry,gp_rating_date,gp_abstract) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    conn = db_operation.create_connection(**mysql_conf)
+    operator = db_operation.execute_query
     gp_list = collection_list.collection.values()
     for gp_code in gp_list:
-        get = get_gp(gp_code)
-        if get:
-            print(agency_rating(get))
+        get_result = get_gp(gp_code)
+        if get_result:
+            for rating in agency_rating(get_result):
+                print(rating)
+                operator(conn, insert_sql, rating)
+    db_operation.db_close_connection(conn)
