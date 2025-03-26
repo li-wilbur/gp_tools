@@ -3,7 +3,8 @@ import bs4
 from gp_tools.conf import collection_list
 from gp_tools import db_operation
 from gp_tools.conf.mysql_conf import mysql_conf
-
+from time import sleep
+from random import random
 
 def get_gp(gp_code):
     url = 'https://stock.finance.sina.com.cn/stock/go.php/vIR_StockSearch/key/' + gp_code + '.phtml'
@@ -36,7 +37,7 @@ def agency_rating(html_content):
             for col in cols:
                 row_data.append(col.get_text(strip=True))
                 if col.get_text(strip=True) == '摘要':
-                    link = 'https' + col.select_one('a').get('href')
+                    link = 'https:' + col.select_one('a').get('href')
                     row_data[8] = link
         except AttributeError as e:
             print('tables data error:', e)
@@ -48,13 +49,21 @@ def agency_rating(html_content):
     # print(result)
     return result
 
+def clear_table(clear=0):
+    if clear == 1:
+        return True
 
 if __name__ == '__main__':
+    clear = 1
+    clear_sql = """delete  from gp_agency_rating;"""
     insert_sql = "INSERT INTO gp_agency_rating (gp_code,gp_name,gp_target_price,gp_latest_rating,gp_rating_agency,gp_analyst,gp_industry,gp_rating_date,gp_abstract) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     conn = db_operation.create_connection(**mysql_conf)
     operator = db_operation.execute_query
+    if clear_table(clear):
+        operator(conn,clear_sql)
     gp_list = collection_list.collection.values()
     for gp_code in gp_list:
+        sleep(random())
         get_result = get_gp(gp_code)
         if get_result:
             for rating in agency_rating(get_result):

@@ -61,7 +61,6 @@ def read_query(connection, query):
             print(f"执行查询时出错: {e}")
             return None
 
-
 def db_close_connection(connection):
     """
     关闭数据库连接

@@ -18,6 +18,8 @@ CREATE TABLE  IF NOT EXISTS `gp_agency_rating` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=161 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 """
+clear_table_gp_agency_rating = """delete * from gp_agency_rating;"""
+
 
 def db_init():
     conn = db_operation.create_connection(**mysql_conf)
