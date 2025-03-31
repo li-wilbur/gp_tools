@@ -28,6 +28,3 @@ def db_init():
     operator(conn, create_db_sql)
     operator(conn, create_agency_rating_sql)
     db_operation.db_close_connection(conn)
-
-if __name__ == '__main__':
-    db_init()
