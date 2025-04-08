@@ -1,10 +1,6 @@
 import requests
 import bs4
-from gp_tools.conf import collection_list
-from gp_tools import db_operation
-from gp_tools.conf.mysql_conf import mysql_conf
-from time import sleep
-from random import random
+
 
 def get_gp(gp_code):
     url = 'https://stock.finance.sina.com.cn/stock/go.php/vIR_StockSearch/key/' + gp_code + '.phtml'
@@ -48,6 +44,7 @@ def agency_rating(html_content):
         result.append(row_data)
     # print(result)
     return result
+
 
 def clear_table(clear_data=0):
     if clear_data == 1:
