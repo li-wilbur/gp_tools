@@ -82,13 +82,11 @@ if __name__ == '__main__':
                 gp_rai.clear_table()
             if args.code == 0:
                 gp_list = collection_list.collection.values()
-                i = 0
                 for gp_code in gp_list:
-                    #print(gp_code)
                     gp_rai.code = gp_code
-                    sleep(random())
                     gp_rai.rai()
                     gp_rai.gp_view()
+                    sleep(random())
             else:
                 gp_rai.rai()
                 gp_rai.gp_view()
