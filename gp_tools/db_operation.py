@@ -38,7 +38,7 @@ def execute_query(connection, query, values=None):
             cursor = connection.cursor()
             cursor.execute(query, values)
             connection.commit()
-            print("Sql 执行成功！")
+            #print("Sql 执行成功！")
         except Error as e:
             print(f"执行查询时出错: {e}")
             return None
@@ -70,6 +70,6 @@ def db_close_connection(connection):
     if connection is not None:
         try:
             connection.close()
-            print("MySQL连接已关闭")
+            #print("MySQL连接已关闭")
         except Error as e:
             print(f"关闭MySQL连接时出错: {e}")

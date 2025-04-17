@@ -44,8 +44,3 @@ def agency_rating(html_content):
         result.append(row_data)
     # print(result)
     return result
-
-
-def clear_table(clear_data=0):
-    if clear_data == 1:
-        return True
