@@ -21,7 +21,7 @@ def init_args():
     # 添加 -C 或 --Clear 命令行参数，该参数为整数类型，可选输入，默认值为 0，用于指定是否先清理表数据
     parser.add_argument('-C', '--Clear', type=int, nargs='?', default=0, help='是否先清理表数据,0 OR 1')
     # 添加 -n 或 --no-db 命令行参数，该参数为整数类型，可选输入，默认值为 1，用于指定是否不依赖数据库
-    parser.add_argument('-n', '--no-db', type=int, nargs='?', default=1, help='是否不依赖数据库,0 OR 1(不依赖数据库、无数据库,默认不依赖数据库)')
+    parser.add_argument('-n', '--no-db', type=int, nargs='?', default=0, help='是否不依赖数据库,0 OR 1(不依赖数据库、无数据库,默认不依赖数据库)')
     # 解析命令行输入的参数
     args = parser.parse_args()
     # 检查 'Clear' 参数是否为 0 或 1
@@ -68,9 +68,11 @@ class RequestAndInsert:
                     print(rating)
             else:
                 # 如果依赖数据库，将评级数据插入数据库
+                insert_sql = "INSERT INTO gp_agency_rating (gp_code,gp_name,gp_target_price,gp_latest_rating,gp_rating_agency,gp_analyst,gp_industry,gp_rating_date,gp_abstract) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                 for rating in agency_rating(get_result):
                     #print(rating)
                     self.operator(self.conn, insert_sql, rating)
+                #self.close_conn()
 
     def gp_view(self):
         """
@@ -114,32 +116,28 @@ class RequestAndInsert:
 if __name__ == '__main__':
     #db_init()
 
-    insert_sql = "INSERT INTO gp_agency_rating (gp_code,gp_name,gp_target_price,gp_latest_rating,gp_rating_agency,gp_analyst,gp_industry,gp_rating_date,gp_abstract) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    #insert_sql = "INSERT INTO gp_agency_rating (gp_code,gp_name,gp_target_price,gp_latest_rating,gp_rating_agency,gp_analyst,gp_industry,gp_rating_date,gp_abstract) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     args = init_args()
     if args:
         gp_rai = RequestAndInsert(mysql_conf,args.code,args.Clear,args.no_db)
-        try:
-            if args.Clear == 1:
-                gp_rai.clear_table()
-            if args.code == 0:
-                gp_list = collection_list.collection.values()
-                for gp_code in gp_list:
-                    # 更新 RequestAndInsert 实例的股票代码为当前遍历到的股票代码
-                    gp_rai.code = gp_code
-                    # 调用 rai 方法，发起对当前股票代码的请求，若依赖数据库则将获取的评级数据插入数据库，否则打印数据
-                    gp_rai.rai()
-                    # 调用 gp_view 方法，查看 gp_agency_rating 表中当前股票代码的前 3 条最新评级数据
-                    gp_rai.gp_view()
-                    # 程序暂停一段随机时间，避免短时间内对服务器发起过多请求，减轻服务器压力
-                    sleep(random())
-            else:
-                # 若用户指定了股票代码，调用 rai 方法，发起对指定股票代码的请求并处理数据
+        if args.Clear == 1 and args.no_db != 1:
+            gp_rai.clear_table()
+        if args.code == 0:
+            gp_list = collection_list.collection.values()
+            for gp_code in gp_list:
+                # 更新 RequestAndInsert 实例的股票代码为当前遍历到的股票代码
+                gp_rai.code = gp_code
+                # 调用 rai 方法，发起对当前股票代码的请求，若依赖数据库则将获取的评级数据插入数据库，否则打印数据
+                gp_rai.rai()
+                # 调用 gp_view 方法，查看 gp_agency_rating 表中当前股票代码的前 3 条最新评级数据
+                gp_rai.gp_view()
+                # 程序暂停一段随机时间，避免短时间内对服务器发起过多请求，减轻服务器压力
+                sleep(random())
+            gp_rai.close_conn()
+        else:
+            # 若用户指定了股票代码，调用 rai 方法，发起对指定股票代码的请求并处理数据
             # 无论程序执行过程中是否出现异常，都关闭数据库连接
             # 捕获程序执行过程中出现的异常，并打印异常信息
-                # 调用 gp_view 方法，查看 gp_agency_rating 表中指定股票代码的前 3 条最新评级数据
-                gp_rai.rai()
-                gp_rai.gp_view()
-        except Exception as e:
-            print(e)
-        finally:
-            gp_rai.close_conn()
+            # 调用 gp_view 方法，查看 gp_agency_rating 表中指定股票代码的前 3 条最新评级数据
+            gp_rai.rai()
+            gp_rai.gp_view()

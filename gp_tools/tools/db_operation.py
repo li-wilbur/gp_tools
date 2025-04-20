@@ -95,6 +95,6 @@ def db_close_connection(connection):
     if connection is not None:
         try:
             connection.close()
-            #print("MySQL连接已关闭")
+            print("MySQL连接已关闭")
         except Error as e:
             print(f"关闭MySQL连接时出错: {e}")
