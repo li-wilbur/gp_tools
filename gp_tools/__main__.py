@@ -1,8 +1,7 @@
-from gp_tools.db_init import db_init
-from gp_tools.agency_rating import get_gp, agency_rating
-from gp_tools import db_operation
-from gp_tools.conf.mysql_conf import mysql_conf
-from gp_tools.conf import collection_list
+from tools.agency_rating import get_gp, agency_rating
+from tools import db_operation
+from conf.mysql_conf import mysql_conf
+from conf import collection_list
 from time import sleep
 from random import random
 import argparse

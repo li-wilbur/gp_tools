@@ -1,5 +1,5 @@
-from gp_tools.conf.mysql_conf import mysql_conf
-from gp_tools import db_operation
+from ..conf.mysql_conf import mysql_conf
+import db_operation
 
 create_db_sql = """CREATE DATABASE IF NOT EXISTS `gp_tools` CHARACTER SET 'utf8mb4';"""
 

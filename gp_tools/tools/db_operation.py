@@ -42,7 +42,9 @@ def execute_query(connection, query, values=None):
         except Error as e:
             print(f"执行查询时出错: {e}")
             return None
-
+    else:
+        print("无法连接到数据库")
+        return None
 
 def read_query(connection, query):
     """
@@ -60,6 +62,9 @@ def read_query(connection, query):
         except Error as e:
             print(f"执行查询时出错: {e}")
             return None
+    else:
+        print("无法连接到数据库")
+        return None
 
 
 def db_close_connection(connection):
