@@ -21,7 +21,7 @@ def init_args():
     # 添加 -C 或 --Clear 命令行参数，该参数为整数类型，可选输入，默认值为 0，用于指定是否先清理表数据
     parser.add_argument('-C', '--Clear', type=int, nargs='?', default=0, help='是否先清理表数据,0 OR 1')
     # 添加 -n 或 --no-db 命令行参数，该参数为整数类型，可选输入，默认值为 1，用于指定是否不依赖数据库
-    parser.add_argument('-n', '--no-db', type=int, nargs='?', default=0, help='是否不依赖数据库,0 OR 1(不依赖数据库、无数据库,默认不依赖数据库)')
+    parser.add_argument('-n', '--no-db', type=int, nargs='?', default=1, help='是否不依赖数据库,0 OR 1(不依赖数据库、无数据库,默认不依赖数据库)')
     # 解析命令行输入的参数
     args = parser.parse_args()
     # 检查 'Clear' 参数是否为 0 或 1
