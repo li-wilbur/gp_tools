@@ -1,5 +1,5 @@
 # 从上级目录的 conf 文件夹中的 mysql_conf 文件导入数据库配置信息
-from ..conf.mysql_conf import mysql_conf
+from gp_tools.conf.mysql_conf import mysql_conf
 # 导入自定义的数据库操作模块
 import db_operation
 
