@@ -13,7 +13,7 @@ def init_args():
     parser = argparse.ArgumentParser(description='这是一个机构对股票评级的数据查询工具')
     parser.add_argument('-c', '--code', type=str, nargs='?', default=0, help='输入一个股票代码')
     parser.add_argument('-C', '--Clear', type=int, nargs='?', default=0, help='是否先清理表数据,0 OR 1')
-    parser.add_argument('-n', '--no-db', type=int, nargs='?', default=0, help='是否不依赖数据库,0 OR 1(不依赖数据库、无数据库)')
+    parser.add_argument('-n', '--no-db', type=int, nargs='?', default=1, help='是否不依赖数据库,0 OR 1(不依赖数据库、无数据库,默认不依赖数据库)')
     args = parser.parse_args()
     if args.Clear not in [0, 1]:
         print('Clear 只能设置为0或者1！')
