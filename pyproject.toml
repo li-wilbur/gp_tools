@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "gp_tools"
 version = "0.1.0"
 authors = [
-  { name = "Your Name", email = "your_email@example.com" },
+  { name = "Wilbur", email = "your_email@example.com" },
 ]
 description = "一个机构对股票评级的数据查询工具"
 readme = "README.md"
@@ -17,7 +17,7 @@ dependencies = [
     "beautifulsoup4",
     "lxml",
 ]
-urls = { Homepage = "https://github.com/your_username/gp_tools" }
+urls = { Homepage = "https://github.com/li-wilbur/gp_tools" }
 
 [project.scripts]
 gp_tools = "gp_tools.__main__:main"

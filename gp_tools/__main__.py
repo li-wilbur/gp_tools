@@ -100,8 +100,7 @@ class RequestAndInsert:
         """
         if self.no_db != 1:
             # 构建删除 SQL 语句，删除 gp_agency_rating 表中的所有数据
-            clear_sql = """delete
-                           from gp_agency_rating;"""
+            clear_sql = """delete from gp_agency_rating;"""
             # 执行删除操作
             self.operator(self.conn, clear_sql)
 
