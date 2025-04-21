@@ -20,4 +20,4 @@ dependencies = [
 urls = { Homepage = "https://github.com/your_username/gp_tools" }
 
 [project.scripts]
-gp_tools = "gp_tools.main:main"
+gp_tools = "gp_tools.__main__:main"
