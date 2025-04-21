@@ -21,7 +21,8 @@ def init_args():
     # 添加 -C 或 --Clear 命令行参数，该参数为整数类型，可选输入，默认值为 0，用于指定是否先清理表数据
     parser.add_argument('-C', '--Clear', type=int, nargs='?', default=0, help='是否先清理表数据,0 OR 1')
     # 添加 -n 或 --no-db 命令行参数，该参数为整数类型，可选输入，默认值为 1，用于指定是否不依赖数据库
-    parser.add_argument('-n', '--no-db', type=int, nargs='?', default=1, help='是否不依赖数据库,0 OR 1(不依赖数据库、无数据库,默认不依赖数据库)')
+    parser.add_argument('-n', '--no-db', type=int, nargs='?', default=1,
+                        help='是否不依赖数据库,0 OR 1(不依赖数据库、无数据库,默认不依赖数据库)')
     # 解析命令行输入的参数
     args = parser.parse_args()
     # 检查 'Clear' 参数是否为 0 或 1
@@ -34,7 +35,7 @@ def init_args():
 
 
 class RequestAndInsert:
-    def __init__(self,mysql_conf,code,clear,no_db):
+    def __init__(self, mysql_conf, code, clear, no_db):
         """
         初始化数据库连接及相关参数
 
@@ -70,9 +71,9 @@ class RequestAndInsert:
                 # 如果依赖数据库，将评级数据插入数据库
                 insert_sql = "INSERT INTO gp_agency_rating (gp_code,gp_name,gp_target_price,gp_latest_rating,gp_rating_agency,gp_analyst,gp_industry,gp_rating_date,gp_abstract) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                 for rating in agency_rating(get_result):
-                    #print(rating)
+                    # print(rating)
                     self.operator(self.conn, insert_sql, rating)
-                #self.close_conn()
+                # self.close_conn()
 
     def gp_view(self):
         """
@@ -82,8 +83,9 @@ class RequestAndInsert:
         """
         if self.no_db != 1:
             # 构建查询 SQL 语句，查询指定股票代码的前 3 条最新评级数据
-            view_sql = """SELECT * FROM	gp_agency_rating WHERE	gp_code = '{}' ORDER BY gp_rating_date DESC LIMIT 3;""".format(self.code)
-            #print(view_sql)
+            view_sql = """SELECT * FROM	gp_agency_rating WHERE	gp_code = '{}' ORDER BY gp_rating_date DESC LIMIT 3;""".format(
+                self.code)
+            # print(view_sql)
             # 执行查询并获取结果
             result = self.db_read(self.conn, view_sql)
             # 遍历结果并打印每一行数据
@@ -98,7 +100,8 @@ class RequestAndInsert:
         """
         if self.no_db != 1:
             # 构建删除 SQL 语句，删除 gp_agency_rating 表中的所有数据
-            clear_sql = """delete  from gp_agency_rating;"""
+            clear_sql = """delete
+                           from gp_agency_rating;"""
             # 执行删除操作
             self.operator(self.conn, clear_sql)
 
@@ -113,13 +116,15 @@ class RequestAndInsert:
             db_operation.db_close_connection(self.conn)
 
 
-if __name__ == '__main__':
-    #db_init()
-
-    #insert_sql = "INSERT INTO gp_agency_rating (gp_code,gp_name,gp_target_price,gp_latest_rating,gp_rating_agency,gp_analyst,gp_industry,gp_rating_date,gp_abstract) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+def main():
+    """
+    主函数，用于初始化参数并执行请求和插入操作
+    :return: 无
+    """
+    # db_init()
     args = init_args()
     if args:
-        gp_rai = RequestAndInsert(mysql_conf,args.code,args.Clear,args.no_db)
+        gp_rai = RequestAndInsert(mysql_conf, args.code, args.Clear, args.no_db)
         if args.Clear == 1 and args.no_db != 1:
             gp_rai.clear_table()
         if args.code == 0:
@@ -141,3 +146,7 @@ if __name__ == '__main__':
             # 调用 gp_view 方法，查看 gp_agency_rating 表中指定股票代码的前 3 条最新评级数据
             gp_rai.rai()
             gp_rai.gp_view()
+
+
+if __name__ == '__main__':
+    main()
