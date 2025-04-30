@@ -23,6 +23,8 @@ def init_args():
     # 添加 -n 或 --no-db 命令行参数，该参数为整数类型，可选输入，默认值为 1，用于指定是否不依赖数据库
     parser.add_argument('-n', '--no-db', type=int, nargs='?', default=1,
                         help='是否不依赖数据库,0 OR 1(不依赖数据库、无数据库,默认不依赖数据库)')
+    parser.add_argument('-l', '--line', type=int, nargs='?', default=3,
+                        help='要打印多少行数据（默认三行）')
     # 解析命令行输入的参数
     args = parser.parse_args()
     # 检查 'Clear' 参数是否为 0 或 1
@@ -35,7 +37,7 @@ def init_args():
 
 
 class RequestAndInsert:
-    def __init__(self, mysql_conf, code, clear, no_db):
+    def __init__(self, mysql_conf, code, clear, no_db,line):
         """
         初始化数据库连接及相关参数
 
@@ -43,6 +45,7 @@ class RequestAndInsert:
         :param code: 股票代码
         :param clear: 是否清理表数据的标志，0 或 1
         :param no_db: 是否不依赖数据库的标志，0 或 1
+        :param line: 要打印多少行数据
         """
         # 如果依赖数据库，则创建数据库连接，并初始化操作方法
         if no_db != 1:
@@ -52,6 +55,7 @@ class RequestAndInsert:
         self.no_db = no_db
         self.code = code
         self.clear = clear
+        self.line = line
 
     def rai(self):
         """
@@ -65,7 +69,7 @@ class RequestAndInsert:
         if get_result:
             # 如果不依赖数据库，打印前 3 条评级数据
             if self.no_db == 1:
-                for rating in agency_rating(get_result)[0:3]:
+                for rating in agency_rating(get_result)[0:self.line]:
                     print(rating)
             else:
                 # 如果依赖数据库，将评级数据插入数据库
@@ -83,8 +87,8 @@ class RequestAndInsert:
         """
         if self.no_db != 1:
             # 构建查询 SQL 语句，查询指定股票代码的前 3 条最新评级数据
-            view_sql = """SELECT * FROM	gp_agency_rating WHERE	gp_code = '{}' ORDER BY gp_rating_date DESC LIMIT 3;""".format(
-                self.code)
+            view_sql = """SELECT * FROM	gp_agency_rating WHERE	gp_code = '{}' ORDER BY gp_rating_date DESC LIMIT {};""".format(
+                self.code,self.line)
             # print(view_sql)
             # 执行查询并获取结果
             result = self.db_read(self.conn, view_sql)
@@ -123,7 +127,7 @@ def main():
     # db_init()
     args = init_args()
     if args:
-        gp_rai = RequestAndInsert(mysql_conf, args.code, args.Clear, args.no_db)
+        gp_rai = RequestAndInsert(mysql_conf, args.code, args.Clear, args.no_db,args.line)
         if args.Clear == 1 and args.no_db != 1:
             gp_rai.clear_table()
         if args.code == 0:
